@@ -9,10 +9,13 @@ Modern graphical interface (WPF) built on the **MilestonePSTools** PowerShell mo
 export cameras, hardware, retention and recordings to **Excel / CSV**, capture snapshots,
 manage groups and create alarms **in bulk**.
 
+[![Total downloads](https://img.shields.io/github/downloads/Nothinx-44/XProtect-Export-Tool-to-Excel-MilestonePSTools-GUI-/total?label=Downloads%20%C2%B7%20T%C3%A9l%C3%A9chargements&labelColor=1E1E2E&color=A6E3A1&logo=github&style=for-the-badge)](../../releases)
+
 ![Windows](https://img.shields.io/badge/Windows-10%2F11%20%7C%20Server%202016%2B-0078D6?logo=windows)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE?logo=powershell)
 ![Languages](https://img.shields.io/badge/UI-EN%20%7C%20FR-brightgreen)
 ![Milestone](https://img.shields.io/badge/Milestone-XProtect-orange)
+![Latest release](https://img.shields.io/github/v/release/Nothinx-44/XProtect-Export-Tool-to-Excel-MilestonePSTools-GUI-?label=version&color=CBA6F7)
 
 <img width="1244" alt="Milestone Toolkit interface" src="https://github.com/user-attachments/assets/909442eb-a8ec-4d50-b90f-e99df0070a9c" />
 
