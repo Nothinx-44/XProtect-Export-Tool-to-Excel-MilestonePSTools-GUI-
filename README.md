@@ -129,9 +129,8 @@ Modules are downloaded automatically from PowerShell Gallery. No action required
 - **Languages** — English and French. Chosen on first launch, then stored in `config.json`
   (key `language`).
 - **Automatic updates** — on startup, the tool checks the latest GitHub release and offers a
-  one-click update. The archive is **verified** (pinned official GitHub repo + **SHA256** checksum
-  published in the release notes), and the previous version is **backed up** with **automatic
-  rollback** on failure.
+  one-click update. The archive is downloaded over **HTTPS from the pinned official repository**,
+  and the previous version is **backed up** with **automatic rollback** on failure.
 
 ## Configuration
 
@@ -270,9 +269,8 @@ Les modules sont téléchargés automatiquement depuis PowerShell Gallery. Aucun
 - **Langues** — français et anglais. Le choix est demandé au premier lancement puis mémorisé dans
   `config.json` (clé `language`).
 - **Mise à jour automatique** — au démarrage, l'outil vérifie la dernière release GitHub et propose
-  la mise à jour en un clic. L'archive est **vérifiée** (dépôt GitHub officiel figé + empreinte
-  **SHA256** publiée dans les notes de release), et l'ancienne version est **sauvegardée** avec
-  **restauration automatique** en cas d'échec.
+  la mise à jour en un clic. L'archive est téléchargée en **HTTPS depuis le dépôt officiel figé**,
+  et l'ancienne version est **sauvegardée** avec **restauration automatique** en cas d'échec.
 
 ## Configuration
 
