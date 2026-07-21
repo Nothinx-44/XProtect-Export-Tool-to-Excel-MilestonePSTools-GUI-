@@ -1,5 +1,15 @@
 # Release Notes
 
+## v4.9.12
+> Mises a jour comptees dans les telechargements GitHub
+
+### Ameliorations
+- **Show-StartupCheck.ps1** : la mise a jour telecharge desormais le **fichier .zip attache** a la release (au lieu de l'archive source auto-generee). GitHub comptabilise ces telechargements — les mises a jour via le logiciel comptent donc dans le total. **Repli automatique** sur l'archive source si aucun asset n'est present (anciennes releases).
+- La verification **SHA256** porte sur l'asset telecharge ; en repli zipball, on s'appuie sur HTTPS + depot fige. Validation d'URL elargie pour couvrir les deux formats.
+- **CI** : le workflow construit un `.zip` propre (`git archive`), l'**attache** a la release, calcule **son** SHA256 et l'injecte dans les notes. Un vrai bouton de telechargement + un compteur fiable, sans intervention.
+
+---
+
 ## v4.9.11
 > Nouveau : creation d'alarmes en masse. + Export Hardware : detection fiable du flux enregistre vs live.
 

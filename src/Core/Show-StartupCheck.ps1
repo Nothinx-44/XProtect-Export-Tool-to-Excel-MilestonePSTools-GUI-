@@ -876,20 +876,31 @@ function Show-StartupCheck {
         & $script:_SC_Refresh
 
         try {
-            # SECURITE : l'archive doit provenir de GitHub, en HTTPS, pour le depot de
-            # confiance. On refuse toute autre origine avant meme de telecharger.
-            $zipUrl = $release.zipball_url
-            $uri    = [Uri]$zipUrl
+            # Source de telechargement : on PRIVILEGIE le fichier .zip attache a la release
+            # (comptabilise dans les telechargements GitHub, et verifie par SHA256). A defaut
+            # (anciennes releases sans asset), on retombe sur l'archive source (zipball).
+            $asset = $release.assets | Where-Object { $_.name -match '\.zip$' } | Select-Object -First 1
+            if ($asset) {
+                $zipUrl  = $asset.browser_download_url
+                $isAsset = $true
+            } else {
+                $zipUrl  = $release.zipball_url
+                $isAsset = $false
+            }
+
+            # SECURITE : l'URL doit pointer vers GitHub (HTTPS) et contenir le depot de confiance.
+            # Couvre l'asset (/REPO/releases/download/...) et le zipball (/repos/REPO/zipball/...).
+            $uri = [Uri]$zipUrl
             if ($uri.Scheme -ne 'https' -or
                 $uri.Host -notmatch '(^|\.)github\.com$' -or
-                $uri.AbsolutePath -notmatch "/repos/$([regex]::Escape($script:_SC_TrustedRepo))/") {
+                $uri.AbsolutePath -notmatch [regex]::Escape($script:_SC_TrustedRepo)) {
                 throw ($script:T.SC_AppUpdateUntrusted -f $zipUrl)
             }
 
-            # SHA256 optionnel : si les notes de release contiennent une ligne
-            # "sha256: <hash>", on verifie l'archive telechargee.
+            # SHA256 (dans les notes) = empreinte de l'ASSET. On la verifie uniquement quand on
+            # telecharge l'asset ; en repli zipball, on s'appuie sur HTTPS + depot fige.
             $expectedHash = $null
-            if ($release.body -match '(?im)^\s*sha256\s*[:=]\s*([0-9a-fA-F]{64})\s*$') {
+            if ($isAsset -and $release.body -match '(?im)^\s*sha256\s*[:=]\s*([0-9a-fA-F]{64})\s*$') {
                 $expectedHash = $Matches[1]
             }
 

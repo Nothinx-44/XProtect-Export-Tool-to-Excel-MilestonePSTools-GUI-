@@ -1,9 +1,9 @@
-name: Injecter le SHA256 dans les notes de release
+name: Publier l'asset .zip + SHA256 de la release
 
-# A chaque release publiee, calcule le SHA256 de l'archive source et l'ajoute
-# automatiquement dans les notes sous forme "sha256: <hash>".
-# L'application verifie ce hash au telechargement de la mise a jour.
-# 100% automatique : aucune action manuelle requise.
+# A chaque release publiee : construit un .zip propre du projet (git archive),
+# l'attache a la release comme fichier telechargeable (compte dans les downloads GitHub),
+# calcule son SHA256 et l'injecte dans les notes. L'application telecharge cet asset a la
+# mise a jour et verifie ce hash. 100% automatique.
 # Le declenchement manuel (workflow_dispatch) permet de (re)traiter un tag existant.
 
 on:
@@ -12,60 +12,64 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Tag de la release a traiter (ex: 4.9.8)"
+        description: "Tag de la release a traiter (ex: 4.9.12)"
         required: true
 
 permissions:
   contents: write
 
 jobs:
-  sha256:
+  asset:
     runs-on: ubuntu-latest
     steps:
+      - name: Determiner le tag
+        id: tag
+        run: echo "tag=${{ github.event.release.tag_name || github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout du tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+
       - name: Verifier que src/Version.ps1 correspond au tag
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name || github.event.inputs.tag }}
-          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          RAW=$(gh api "repos/$REPO/contents/src/Version.ps1?ref=$TAG" -q .content | base64 -d)
-          VER=$(printf '%s' "$RAW" | grep -oE "[0-9]+\.[0-9]+\.[0-9]+" | head -n1)
-          CLEAN_TAG="${TAG#v}"
+          VER=$(grep -oE "[0-9]+\.[0-9]+\.[0-9]+" src/Version.ps1 | head -n1)
+          CLEAN_TAG="${{ steps.tag.outputs.tag }}"; CLEAN_TAG="${CLEAN_TAG#v}"
           echo "Version.ps1 = $VER | tag = $CLEAN_TAG"
           if [ "$VER" != "$CLEAN_TAG" ]; then
-            echo "::error::src/Version.ps1 ($VER) ne correspond pas au tag ($CLEAN_TAG). L'auto-updater comparerait des versions incoherentes."
+            echo "::error::src/Version.ps1 ($VER) ne correspond pas au tag ($CLEAN_TAG)."
             exit 1
           fi
 
-      - name: Calculer et injecter le SHA256
+      - name: Construire l'asset, l'uploader et injecter le SHA256
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name || github.event.inputs.tag }}
+          TAG: ${{ steps.tag.outputs.tag }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          echo "Traitement du tag: $TAG"
+          ZIP="Milestone-Toolkit-$TAG.zip"
 
-          # Recupere les notes actuelles
+          # Archive propre des fichiers versionnes du tag, prefixee d'un dossier
+          git archive --format=zip --prefix=Milestone-Toolkit/ -o "$ZIP" HEAD
+
+          # Attache (ou remplace) l'asset sur la release
+          gh release upload "$TAG" "$ZIP" --clobber --repo "$REPO"
+
+          HASH=$(sha256sum "$ZIP" | cut -d' ' -f1)
+          echo "SHA256 (asset) = $HASH"
+
           BODY=$(gh release view "$TAG" --repo "$REPO" --json body -q .body)
 
-          # Si un hash est deja present, on ne fait rien (evite une boucle sur "edited")
-          if printf '%s' "$BODY" | grep -qiE '^[[:space:]]*sha256[[:space:]]*[:=]'; then
-            echo "SHA256 deja present dans les notes, rien a faire."
+          # Notes deja a jour avec CE hash ? -> ne rien editer (evite la boucle sur "edited")
+          if printf '%s' "$BODY" | grep -qiE "^[[:space:]]*sha256[[:space:]]*[:=][[:space:]]*$HASH[[:space:]]*$"; then
+            echo "Notes deja a jour."
             exit 0
           fi
 
-          # Telecharge l'archive source EXACTE que l'application ira chercher (zipball_url)
-          curl -sSL \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/zipball/$TAG" -o release.zip
-
-          HASH=$(sha256sum release.zip | cut -d' ' -f1)
-          echo "SHA256 = $HASH"
-
-          # Ajoute la ligne a la fin des notes existantes
-          NEWBODY=$(printf '%s\n\nsha256: %s\n' "$BODY" "$HASH")
+          # Retire toute ancienne ligne sha256, puis ajoute la nouvelle
+          CLEANBODY=$(printf '%s' "$BODY" | grep -viE "^[[:space:]]*sha256[[:space:]]*[:=]" || true)
+          NEWBODY=$(printf '%s\n\nsha256: %s\n' "$CLEANBODY" "$HASH")
           gh release edit "$TAG" --repo "$REPO" --notes "$NEWBODY"
-          echo "Notes de release mises a jour."
+          echo "Notes mises a jour avec le SHA256 de l'asset."
