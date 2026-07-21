@@ -17,7 +17,8 @@ manage groups and create alarms **in bulk**.
 ![Milestone](https://img.shields.io/badge/Milestone-XProtect-orange)
 ![Latest release](https://img.shields.io/github/v/release/Nothinx-44/XProtect-Export-Tool-to-Excel-MilestonePSTools-GUI-?label=version&color=CBA6F7)
 
-<img width="1244" alt="Milestone Toolkit interface" src="https://github.com/user-attachments/assets/909442eb-a8ec-4d50-b90f-e99df0070a9c" />
+<img width="1145" height="893" alt="image" src="https://github.com/user-attachments/assets/f64781e2-9b82-49ad-8f03-6f4e19dd3806" />
+
 
 **🌐 [English](#-english) · [Français](#-français)**
 
