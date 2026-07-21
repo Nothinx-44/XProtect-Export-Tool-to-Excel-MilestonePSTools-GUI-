@@ -1,14 +1,16 @@
-name: Publier l'asset .zip + SHA256 de la release
+name: Publier l'asset .zip de la release
 
-# A chaque release publiee : construit un .zip propre du projet (git archive),
-# l'attache a la release comme fichier telechargeable (compte dans les downloads GitHub),
-# calcule son SHA256 et l'injecte dans les notes. L'application telecharge cet asset a la
-# mise a jour et verifie ce hash. 100% automatique.
+# A chaque release publiee : construit un .zip propre du projet (git archive) et
+# l'attache a la release comme fichier telechargeable. Ce fichier est ce que
+# l'application telecharge a la mise a jour (et il compte dans les downloads GitHub).
+# La verification d'integrite repose sur HTTPS + le depot fige (pas de SHA256 dans les
+# notes : une seule ligne ne peut pas convenir a la fois aux anciennes versions qui
+# telechargent le zipball source et aux nouvelles qui telechargent l'asset).
 # Le declenchement manuel (workflow_dispatch) permet de (re)traiter un tag existant.
 
 on:
   release:
-    types: [published, edited]
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -42,7 +44,7 @@ jobs:
             exit 1
           fi
 
-      - name: Construire l'asset, l'uploader et injecter le SHA256
+      - name: Construire et attacher l'asset .zip
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.tag.outputs.tag }}
@@ -50,26 +52,6 @@ jobs:
         run: |
           set -euo pipefail
           ZIP="Milestone-Toolkit-$TAG.zip"
-
-          # Archive propre des fichiers versionnes du tag, prefixee d'un dossier
           git archive --format=zip --prefix=Milestone-Toolkit/ -o "$ZIP" HEAD
-
-          # Attache (ou remplace) l'asset sur la release
           gh release upload "$TAG" "$ZIP" --clobber --repo "$REPO"
-
-          HASH=$(sha256sum "$ZIP" | cut -d' ' -f1)
-          echo "SHA256 (asset) = $HASH"
-
-          BODY=$(gh release view "$TAG" --repo "$REPO" --json body -q .body)
-
-          # Notes deja a jour avec CE hash ? -> ne rien editer (evite la boucle sur "edited")
-          if printf '%s' "$BODY" | grep -qiE "^[[:space:]]*sha256[[:space:]]*[:=][[:space:]]*$HASH[[:space:]]*$"; then
-            echo "Notes deja a jour."
-            exit 0
-          fi
-
-          # Retire toute ancienne ligne sha256, puis ajoute la nouvelle
-          CLEANBODY=$(printf '%s' "$BODY" | grep -viE "^[[:space:]]*sha256[[:space:]]*[:=]" || true)
-          NEWBODY=$(printf '%s\n\nsha256: %s\n' "$CLEANBODY" "$HASH")
-          gh release edit "$TAG" --repo "$REPO" --notes "$NEWBODY"
-          echo "Notes mises a jour avec le SHA256 de l'asset."
+          echo "Asset $ZIP attache a la release $TAG."

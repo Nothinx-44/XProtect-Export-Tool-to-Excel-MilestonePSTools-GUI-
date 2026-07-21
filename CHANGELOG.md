@@ -5,8 +5,10 @@
 
 ### Ameliorations
 - **Show-StartupCheck.ps1** : la mise a jour telecharge desormais le **fichier .zip attache** a la release (au lieu de l'archive source auto-generee). GitHub comptabilise ces telechargements — les mises a jour via le logiciel comptent donc dans le total. **Repli automatique** sur l'archive source si aucun asset n'est present (anciennes releases).
-- La verification **SHA256** porte sur l'asset telecharge ; en repli zipball, on s'appuie sur HTTPS + depot fige. Validation d'URL elargie pour couvrir les deux formats.
-- **CI** : le workflow construit un `.zip` propre (`git archive`), l'**attache** a la release, calcule **son** SHA256 et l'injecte dans les notes. Un vrai bouton de telechargement + un compteur fiable, sans intervention.
+- Validation d'URL elargie pour couvrir les deux formats (asset et zipball). Integrite assuree par HTTPS + depot fige.
+- **CI** : le workflow construit un `.zip` propre (`git archive`) et l'**attache** a chaque release. Un vrai bouton de telechargement + un compteur fiable, sans intervention.
+
+> Note : la ligne `sha256:` dans les notes a ete abandonnee — une seule empreinte ne peut pas convenir a la fois aux anciennes versions (qui verifient le zipball) et aux nouvelles (qui verifient l'asset). L'integrite reste assuree par le telechargement HTTPS depuis le depot fige.
 
 ---
 
