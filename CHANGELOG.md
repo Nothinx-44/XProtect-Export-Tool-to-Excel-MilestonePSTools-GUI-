@@ -1,5 +1,14 @@
 # Release Notes
 
+## v4.9.13
+> Correctif : deblocage des mises a jour depuis les versions <= 4.9.11
+
+### Corrections
+- Les releases 4.9.11 / 4.9.12 avaient une ligne `sha256:` dans leurs notes qui bloquait la mise a jour des anciennes versions (elles telechargent le zipball source et comparaient au hash de l'asset). Impossible a nettoyer sur ces releases : GitHub relance le workflow **fige dans leur commit** (qui reinjecte le sha256) des qu'on edite leurs notes.
+- Cette release embarque le workflow corrige (aucune injection de sha256) : ses notes restent propres, elle devient la *latest*, et les clients <= 4.9.11 s'y mettent a jour sans blocage. Integrite assuree par HTTPS + depot fige.
+
+---
+
 ## v4.9.12
 > Mises a jour comptees dans les telechargements GitHub
 
