@@ -81,7 +81,7 @@ $script:T = @{
     MW_LblGestion        = 'GESTION'
     MW_BtnExportHardware = 'Export Hardware (Excel)'
     MW_BtnGroupByModel   = 'Grouper par Modele'
-    MW_BtnAlarms         = 'Creer des alarmes'
+    MW_BtnAlarms         = 'Gestion des alarmes'
     MW_LblMonitoring     = 'MONITORING'
     MW_BtnCameraStatus   = 'Etat des cameras'
     MW_BtnPlaybackReport = "Dates d'enregistrement"
@@ -117,16 +117,16 @@ $script:T = @{
     Act_SnapshotPtz  = 'Snapshot - Presets PTZ'
     Act_ExportHW     = 'Export Hardware'
     Act_GroupModel   = 'Grouper par Modele'
-    Act_Alarms       = 'Creation d''alarmes'
+    Act_Alarms       = 'Gestion des alarmes'
     Act_CamStatus    = 'Etat des cameras'
     Act_Playback     = "Dates d'enregistrement"
     Act_RecStats     = 'Stats Enregistrement (7 jours)'
     Act_License      = 'Informations Licence'
 
     # ALARM BUILDER DIALOG
-    AL_Title             = 'Creation d''alarmes'
-    AL_Header            = 'Creation d''alarmes en masse'
-    AL_Subtitle          = 'Cree des definitions d''alarme sur plusieurs cameras a la fois.'
+    AL_Title             = 'Gestion des alarmes'
+    AL_Header            = 'Gestion des alarmes'
+    AL_Subtitle          = 'Creez, activez, desactivez ou supprimez des definitions d''alarme en masse.'
     AL_ModeLabel         = 'REGLAGES'
     AL_ModeNew           = 'Nouvelle alarme'
     AL_ModeDup           = 'Dupliquer une existante'
@@ -137,7 +137,7 @@ $script:T = @{
     AL_InstrLabel        = 'Instructions (optionnel)'
     AL_DupLabel          = 'Alarme a dupliquer'
     AL_DupInfo           = 'Les reglages de "{0}" (type, priorite, categorie) seront repris.'
-    AL_ScopeLabel        = 'PORTEE'
+    AL_ScopeLabel        = 'CAMERAS CONCERNEES'
     AL_ScopeAll          = 'Toutes les cameras'
     AL_ScopeSel          = 'Selection de cameras'
     AL_PickBtn           = 'Choisir les cameras...'
@@ -169,6 +169,28 @@ $script:T = @{
     AL_LogCancelled      = 'Annule ({0}/{1}).'
     AL_LogDonePer        = 'Termine : {0} alarme(s) creee(s), {1} erreur(s).'
     AL_LogDoneGlobal     = 'Alarme globale creee avec succes.'
+    # -- Onglets Creer / Gerer --
+    AL_TopCreate         = 'Creer'
+    AL_TopManage         = 'Gerer / Supprimer'
+    AL_BtnClose          = 'Fermer'
+    # -- Gestion en masse --
+    AL_MngHeader         = 'Alarmes existantes (filtrer, puis selectionner)'
+    AL_MngCount          = '{0} alarme(s) — {1} selectionnee(s)'
+    AL_MngEmpty          = 'Aucune alarme definie sur ce serveur.'
+    AL_MngSelectAll      = 'Tout selectionner'
+    AL_MngEnable         = 'Activer'
+    AL_MngDisable        = 'Desactiver'
+    AL_MngDelete         = 'Supprimer'
+    AL_MngClean          = 'Nettoyer les alarmes de test'
+    AL_MngCleanHint      = 'Supprime les alarmes techniques « __mt_* » laissees par une operation interrompue.'
+    AL_MngDisabledTag    = ' (desactivee)'
+    AL_MngNoSel          = 'Aucune alarme selectionnee.'
+    AL_MngConfirmTitle   = 'Confirmer la suppression'
+    AL_MngConfirmDel     = "Supprimer definitivement {0} alarme(s) ?`nCette action est irreversible."
+    AL_MngLogDel         = '{0} alarme(s) supprimee(s), {1} erreur(s).'
+    AL_MngLogEnable      = '{0} alarme(s) activee(s), {1} erreur(s).'
+    AL_MngLogDisable     = '{0} alarme(s) desactivee(s), {1} erreur(s).'
+    AL_MngLogClean       = 'Nettoyage : {0} alarme(s) de test supprimee(s).'
 
     # EXPORT HARDWARE DIALOG
     EH_DialogTitle   = "Options d'export"

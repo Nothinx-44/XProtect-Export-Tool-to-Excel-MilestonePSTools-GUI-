@@ -1,5 +1,18 @@
 # Release Notes
 
+## v4.9.14
+> Gestion des alarmes en masse : activer / desactiver / supprimer
+
+### Nouveautes
+- **Nouvel onglet « Gerer / Supprimer »** dans la fenetre d'alarmes : liste filtrable de toutes les alarmes existantes (● active / ○ desactivee), selection multiple, puis **Activer**, **Desactiver** ou **Supprimer** en masse. Suppression protegee par une confirmation.
+- **Bouton « Nettoyer les alarmes de test »** : supprime les alarmes techniques `__mt_*` qui pouvaient rester apres une operation interrompue (pre-vol / sonde).
+
+### Corrections / robustesse
+- Prefixe des alarmes techniques centralise (`__mt_`) et desormais nettoyable depuis l'interface.
+- Mapping fiable liste → definition d'alarme (via `Tag`), sans ambiguite meme en cas de noms identiques.
+
+---
+
 ## v4.9.13
 > Correctif : deblocage des mises a jour depuis les versions <= 4.9.11
 

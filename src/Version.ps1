@@ -4,4 +4,4 @@
     Dot-source par Bootstrap.ps1 et App.ps1. Ne pas dupliquer ailleurs.
 #>
 
-$script:AppVersion = '4.9.13'
+$script:AppVersion = '4.9.14'
