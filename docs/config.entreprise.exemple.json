@@ -1,0 +1,11 @@
+{
+    "outputDirectory": "./Output",
+    "snapshotQuality": 95,
+    "csvDelimiter": ";",
+    "csvEncoding": "UTF8",
+    "language": "fr",
+    "autoLogin": false,
+    "autoUpdate": {
+        "enabled": false
+    }
+}

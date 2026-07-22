@@ -131,6 +131,9 @@ Modules are downloaded automatically from PowerShell Gallery. No action required
 - **Automatic updates** — on startup, the tool checks the latest GitHub release and offers a
   one-click update. The archive is downloaded over **HTTPS from the pinned official repository**,
   and the previous version is **backed up** with **automatic rollback** on failure.
+- **🔒 Security & enterprise deployment** — see [SECURITY.md](SECURITY.md) and the
+  [hardened enterprise guide](docs/DEPLOIEMENT-ENTREPRISE.md) (offline mode, no auto-update,
+  least-privilege account, IT validation checklist).
 
 ## Configuration
 
@@ -271,6 +274,9 @@ Les modules sont téléchargés automatiquement depuis PowerShell Gallery. Aucun
 - **Mise à jour automatique** — au démarrage, l'outil vérifie la dernière release GitHub et propose
   la mise à jour en un clic. L'archive est téléchargée en **HTTPS depuis le dépôt officiel figé**,
   et l'ancienne version est **sauvegardée** avec **restauration automatique** en cas d'échec.
+- **🔒 Sécurité & déploiement entreprise** — voir [SECURITY.md](SECURITY.md) et le
+  [guide entreprise durci](docs/DEPLOIEMENT-ENTREPRISE.md) (mode hors-ligne, sans auto-update,
+  compte moindre privilège, checklist de validation IT).
 
 ## Configuration
 
