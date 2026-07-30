@@ -62,6 +62,8 @@ $script:Config = @{
 . (Join-Path $SrcPath 'Actions/Export-HardwareReport.ps1')
 . (Join-Path $SrcPath 'Actions/Set-CameraGroupByModel.ps1')
 . (Join-Path $SrcPath 'Actions/New-BulkAlarm.ps1')
+. (Join-Path $SrcPath 'Actions/Add-CameraDevice.ps1')
+. (Join-Path $SrcPath 'Actions/Import-CameraExcel.ps1')
 . (Join-Path $SrcPath 'Actions/Get-PtzPresetSnapshot.ps1')
 . (Join-Path $SrcPath 'Actions/Get-RecordingStats.ps1')
 . (Join-Path $SrcPath 'Actions/Get-LicenseInfo.ps1')
@@ -145,6 +147,7 @@ $script:BtnPtzSnapshot      = $Window.FindName('BtnPtzSnapshot')
 $script:BtnExportHardware   = $Window.FindName('BtnExportHardware')
 $script:BtnGroupByModel     = $Window.FindName('BtnGroupByModel')
 $script:BtnAlarms           = $Window.FindName('BtnAlarms')
+$script:BtnAddCamera        = $Window.FindName('BtnAddCamera')
 $script:BtnRecordingStats   = $Window.FindName('BtnRecordingStats')
 $script:BtnLicenseInfo      = $Window.FindName('BtnLicenseInfo')
 $script:BtnCameraStatus     = $Window.FindName('BtnCameraStatus')
@@ -187,6 +190,7 @@ $script:BtnPtzSnapshot.Content.Children[1].Text      = $script:T.MW_BtnPtz
 $script:BtnExportHardware.Content.Children[1].Text   = $script:T.MW_BtnExportHardware
 $script:BtnGroupByModel.Content.Children[1].Text     = $script:T.MW_BtnGroupByModel
 $script:BtnAlarms.Content.Children[1].Text           = $script:T.MW_BtnAlarms
+$script:BtnAddCamera.Content.Children[1].Text        = $script:T.MW_BtnAddCamera
 $script:BtnCameraStatus.Content.Children[1].Text     = $script:T.MW_BtnCameraStatus
 $script:BtnPlaybackReport.Content.Children[1].Text   = $script:T.MW_BtnPlaybackReport
 $script:BtnRecordingStats.Content.Children[1].Text   = $script:T.MW_BtnRecordingStats
@@ -302,7 +306,7 @@ function Write-UILog {
 
 $script:ActionButtons = @(
     $BtnSnapshotSelected, $BtnSnapshotAll, $BtnPtzSnapshot,
-    $BtnExportHardware, $BtnGroupByModel, $BtnAlarms,
+    $BtnExportHardware, $BtnGroupByModel, $BtnAlarms, $BtnAddCamera,
     $BtnCameraStatus, $BtnPlaybackReport,
     $BtnRecordingStats, $BtnLicenseInfo
 )
@@ -423,6 +427,13 @@ $BtnGroupByModel.Add_Click({
 $BtnAlarms.Add_Click({
     Invoke-Action -Name $script:T.Act_Alarms -Action {
         New-BulkAlarm -Config $script:Config -Log $logCallback `
+            -Cancel $script:IsCancelled -ReportProgress $script:ReportProgress
+    }
+})
+
+$BtnAddCamera.Add_Click({
+    Invoke-Action -Name $script:T.Act_AddCamera -Action {
+        Add-CameraDevice -Config $script:Config -Log $logCallback `
             -Cancel $script:IsCancelled -ReportProgress $script:ReportProgress
     }
 })

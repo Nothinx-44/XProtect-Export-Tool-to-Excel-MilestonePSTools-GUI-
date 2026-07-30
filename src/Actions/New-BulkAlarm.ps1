@@ -480,11 +480,11 @@ function Show-AlarmBuilderDialog {
     $refreshManage = {
         $filter = "$($TxtFilter.Text)".Trim().ToLowerInvariant()
         $LstAlarms.Items.Clear()
-        $view = @()
+        $view = [System.Collections.Generic.List[object]]::new()
         foreach ($a in $script:_AL_Existing) {
             $nm = "$($a.Name)"
             if ($filter -and ($nm.ToLowerInvariant().IndexOf($filter) -lt 0)) { continue }
-            $view += $a
+            $view.Add($a)
             $enabled = $true
             try { $enabled = [bool]$a.Enabled } catch {}
             $dot = if ($enabled) { [char]0x25CF } else { [char]0x25CB }
@@ -502,8 +502,8 @@ function Show-AlarmBuilderDialog {
     # journalise via le modele $LogKey, puis recharge la liste depuis le serveur.
     $applyToSelection = {
         param([scriptblock]$Op, [string]$LogKey)
-        $sel = @()
-        foreach ($it in $LstAlarms.SelectedItems) { $sel += $it.Tag }
+        $sel = [System.Collections.Generic.List[object]]::new()
+        foreach ($it in $LstAlarms.SelectedItems) { $sel.Add($it.Tag) }
         if ($sel.Count -eq 0) {
             [System.Windows.MessageBox]::Show($script:T.AL_MngNoSel, $script:T.AL_Title, 'OK', 'Warning') | Out-Null
             return $null

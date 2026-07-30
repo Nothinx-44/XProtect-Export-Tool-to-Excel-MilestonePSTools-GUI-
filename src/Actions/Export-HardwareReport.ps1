@@ -545,8 +545,11 @@ function Export-HardwareReport {
     if ($includeRefImages -and $refImagesFolder -and (Test-Path $refImagesFolder)) {
         & $Log ($script:T.EH_LogRefImages -f $refImagesFolder)
         $refExtensions = @('.jpg', '.jpeg', '.png', '.bmp', '.gif')
+        # Tri une seule fois (du plus recent au plus ancien) : la recherche par camera
+        # peut alors se contenter d'un "Select -First 1" sans re-trier a chaque iteration.
         $refFiles = @(Get-ChildItem -Path $refImagesFolder -File -ErrorAction SilentlyContinue |
-            Where-Object { $refExtensions -contains $_.Extension.ToLowerInvariant() })
+            Where-Object { $refExtensions -contains $_.Extension.ToLowerInvariant() } |
+            Sort-Object LastWriteTime -Descending)
         $refTotal = $camReport.Count
         foreach ($cam in $camReport) {
             if (& $Cancel) { break }
@@ -554,7 +557,7 @@ function Export-HardwareReport {
             # Correspond a "NomCamera.ext" ou "NomCamera_<suffixe>.ext" (ex. snapshots horodates)
             $match = $refFiles | Where-Object {
                 $_.BaseName -eq $safeName -or $_.BaseName.StartsWith("${safeName}_", [System.StringComparison]::OrdinalIgnoreCase)
-            } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+            } | Select-Object -First 1
             if ($match) {
                 $refImgPaths[$cam.Name] = $match.FullName
                 & $Log ($script:T.EH_LogSnapOk -f $refImgPaths.Count, $refTotal, $cam.Name)

@@ -1,5 +1,23 @@
 # Release Notes
 
+## v4.9.15
+> Ajout de cameras : auto-detection du pilote + import Excel en masse
+
+### Nouveautes
+- **Nouvel onglet « Ajouter des cameras »** (section Gestion) : ajout par **auto-detection** du pilote par Milestone (`Start-VmsHardwareScan`). Mode **une camera** ou **liste** d'adresses, avec identifiants du peripherique (mot de passe en SecureString, jamais journalise).
+- **Import Excel en masse** : bouton « Ajouter depuis un fichier Excel » + « Telecharger le modele Excel ». Le modele (stylise, listes deroulantes verrouillees : HTTPS, serveur, roles de flux) se remplit une ligne par camera ; les flux 1/2/3 sont configures selon les colonnes (Enregistrement = resolution max + 20 fps, Live ≈ 1080p, Autre ≈ 360p).
+- **Clonage optionnel** des reglages de flux (codec / resolution / FPS) depuis un modele deja present sur le serveur.
+
+### Robustesse / optimisation
+- Logique scan + ajout **partagee** entre l'ajout manuel et l'import (helper unique) ; construction d'URI et renommage factorises.
+- Sous-processus Excel **non bloquants** (interface reactive) avec borne de temps de securite.
+- Mot de passe vide gere sans erreur ; ligne d'exemple du modele exclue de l'import ; nombreux durcissements issus d'une revue multi-agents.
+
+### Note
+- Milestone exige que la camera soit **joignable** sur le reseau pour l'ajouter (le pilote est auto-detecte). L'ajout hors reseau n'est pas supporte par la plateforme.
+
+---
+
 ## v4.9.14
 > Gestion des alarmes en masse : activer / desactiver / supprimer
 
