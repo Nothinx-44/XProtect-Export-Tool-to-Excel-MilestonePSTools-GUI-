@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Import de cameras en masse depuis un fichier Excel : generation du MODELE a remplir,
     puis IMPORT (scan auto-detection du pilote -> ajout -> configuration des flux).

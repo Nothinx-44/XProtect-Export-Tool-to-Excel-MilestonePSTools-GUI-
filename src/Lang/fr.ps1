@@ -1,4 +1,4 @@
-$em  = [char]0x2014   # em dash, safe pour PowerShell 5.1
+﻿$em  = [char]0x2014   # em dash, safe pour PowerShell 5.1
 $ver = if ($script:AppVersion) { $script:AppVersion } else { '4.6' }
 
 $script:T = @{

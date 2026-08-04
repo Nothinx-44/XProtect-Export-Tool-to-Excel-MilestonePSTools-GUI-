@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Bootstrap interne de Milestone Toolkit. Appele par Launch.bat.
     Ne pas executer directement — utiliser Launch.bat a la racine du projet.

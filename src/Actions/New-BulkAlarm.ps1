@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Creation d'alarmes Milestone en masse, ou par duplication d'une alarme existante,
     et GESTION en masse (activer / desactiver / supprimer / nettoyer) des alarmes.

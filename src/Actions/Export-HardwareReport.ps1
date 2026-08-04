@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Exporte un rapport Excel de tous les equipements Milestone.
     Colonnes selectionnables via une fenetre de choix. Mots de passe exclus par defaut.

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Fenetre GUI de verification des dependances au demarrage.
 #>
@@ -722,16 +722,33 @@ function Show-StartupCheck {
                 if (Test-Path $localPath) { Remove-Item $localPath -Recurse -Force -ErrorAction SilentlyContinue }
                 New-Item $localPath -ItemType Directory -Force | Out-Null
 
-                # Telechargement via WebClient
+                # Telechargement ASYNCHRONE avec pompage du dispatcher : DownloadFile
+                # synchrone figeait la fenetre pendant tout le telechargement
+                # (~110 Mo pour MilestonePSTools). Meme idiome que Start-PumpingProcess.
                 $wc = [System.Net.WebClient]::new()
                 try {
-                    $wc.DownloadFile("https://www.powershellgallery.com/api/v2/package/$name", $tempNupkg)
+                    $dlTask = $wc.DownloadFileTaskAsync("https://www.powershellgallery.com/api/v2/package/$name", $tempNupkg)
+                    while (-not $dlTask.IsCompleted) {
+                        $script:_SC_Win.Dispatcher.Invoke(
+                            [System.Windows.Threading.DispatcherPriority]::Background, [Action]{})
+                        Start-Sleep -Milliseconds 120
+                    }
+                    if ($dlTask.IsFaulted) {
+                        $inner = $dlTask.Exception.InnerException
+                        if ($inner) { throw $inner } else { throw $dlTask.Exception }
+                    }
                 } finally {
                     $wc.Dispose()
                 }
 
-                # Extraction (nupkg = ZIP) — Expand-Archive -Force gere les dossiers existants
-                Expand-Archive -Path $tempNupkg -DestinationPath $tempExtract -Force -ErrorAction Stop
+                # Extraction (nupkg = ZIP) — API .NET directe, comme partout ailleurs
+                # dans le projet (Initialize-Modules, Updater, .bat). Expand-Archive
+                # re-liste chaque entree apres ecriture et echoue par intermittence
+                # (ItemNotFoundException sur _rels\.rels) quand un antivirus retient
+                # brievement les fichiers fraichement extraits.
+                Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction Stop
+                if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force -ErrorAction SilentlyContinue }
+                [System.IO.Compression.ZipFile]::ExtractToDirectory($tempNupkg, $tempExtract)
 
                 # Copie des fichiers du module (sans les metadonnees NuGet)
                 $excludeNames = @('[Content_Types].xml')

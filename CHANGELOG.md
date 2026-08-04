@@ -1,5 +1,16 @@
 # Release Notes
 
+## v4.9.16
+> Correctifs : « Preparer offline » fiabilise (extraction + UI reactive), accents corriges, config.json partiel tolere
+
+### Corrections
+- **Preparer offline** : l'extraction du `.nupkg` echouait par intermittence sur certains postes (`ItemNotFoundException` sur `_rels\.rels`), typiquement quand un antivirus d'entreprise retient brievement les fichiers fraichement extraits. Cause : `Expand-Archive` re-liste chaque entree apres ecriture. Remplace par l'API .NET `ZipFile::ExtractToDirectory` — deja utilisee partout ailleurs dans le projet (Initialize-Modules, Updater, script de demarrage) — plus rapide et insensible a ce probleme.
+- **Preparer offline (UI)** : le telechargement (~110 Mo) etait synchrone sur le thread UI et figeait la fenetre de demarrage. Passe en asynchrone avec pompage du dispatcher (meme idiome que les sous-processus Excel) : la fenetre reste reactive pendant tout le telechargement.
+- **Accents casses dans l'interface** : les fichiers de langue (et 10 autres scripts) etaient en UTF-8 **sans BOM** ; PowerShell 5.1 les lisait en ANSI et affichait `â€"` a la place du tiret dans l'onglet « Gerer » des alarmes. BOM UTF-8 ajoute aux 12 fichiers concernes.
+- **config.json partiel** : une cle absente ou vide (fichier edite a la main, ancienne version) produisait `snapshotQuality = 0` (JPEG qualite nulle) ou un encodage CSV `$null` (echec d'export). Les valeurs par defaut sont desormais appliquees cle par cle, et `snapshotQuality` est valide (1-100, repli sur 95).
+
+---
+
 ## v4.9.15
 > Ajout de cameras : auto-detection du pilote + import Excel en masse
 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Masquage/affichage de la fenetre console — helper partage (Bootstrap + App).
     Evite la duplication du P/Invoke ConsoleHider/ConsoleHelper.

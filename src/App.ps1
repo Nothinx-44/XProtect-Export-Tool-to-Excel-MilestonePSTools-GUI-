@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Point d'entree principal de l'application Milestone Toolkit.
 #>
@@ -24,11 +24,22 @@ if (Test-Path $configPath) {
     $configRaw = Get-Content $configPath -Raw -Encoding UTF8 | ConvertFrom-Json
 }
 else {
-    $configRaw = [PSCustomObject]@{
-        outputDirectory = './Output'
-        snapshotQuality = 95
-        csvDelimiter    = ';'
-        csvEncoding     = 'UTF8'
+    $configRaw = [PSCustomObject]@{}
+}
+
+# Valeurs par defaut appliquees CLE PAR CLE : un config.json partiel (edite a la main
+# ou issu d'une ancienne version) ne doit pas produire snapshotQuality = 0 (cast [int]
+# de $null) ni un csvEncoding $null qui fait echouer Export-Csv.
+$configDefaults = @{
+    outputDirectory = './Output'
+    snapshotQuality = 95
+    csvDelimiter    = ';'
+    csvEncoding     = 'UTF8'
+}
+foreach ($k in $configDefaults.Keys) {
+    $existing = $configRaw.PSObject.Properties[$k]
+    if (-not $existing -or [string]::IsNullOrWhiteSpace("$($existing.Value)")) {
+        Add-Member -InputObject $configRaw -NotePropertyName $k -NotePropertyValue $configDefaults[$k] -Force
     }
 }
 
@@ -39,9 +50,17 @@ if (-not [System.IO.Path]::IsPathRooted($outputDir)) {
 
 $script:DependenciesPath = Join-Path $AppRoot 'Dependencies'
 
+# snapshotQuality : valide 1..100, sinon retour au defaut (une valeur non numerique
+# dans le JSON ferait sinon planter le cast [int] au demarrage).
+$snapQuality = 0
+if (-not [int]::TryParse("$($configRaw.snapshotQuality)", [ref]$snapQuality) -or
+    $snapQuality -lt 1 -or $snapQuality -gt 100) {
+    $snapQuality = $configDefaults.snapshotQuality
+}
+
 $script:Config = @{
     outputDirectory = $outputDir
-    snapshotQuality = [int]$configRaw.snapshotQuality
+    snapshotQuality = $snapQuality
     csvDelimiter    = $configRaw.csvDelimiter
     csvEncoding     = $configRaw.csvEncoding
     logDirectory    = Join-Path $AppRoot 'Logs'

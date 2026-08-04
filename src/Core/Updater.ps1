@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Applique une mise a jour de Milestone Toolkit apres que le processus principal a quitte.
     Appele par le bouton de mise a jour dans Show-StartupCheck — ne pas executer directement.

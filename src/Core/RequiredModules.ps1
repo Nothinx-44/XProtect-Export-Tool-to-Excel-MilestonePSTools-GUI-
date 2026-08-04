@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Liste canonique des modules PowerShell requis — SOURCE UNIQUE DE VERITE.
     Utilise par Initialize-Modules, Show-StartupCheck et Save-Dependencies.
